@@ -65,4 +65,11 @@ async function paginateCalendarEvents(calendarApiId, pageDelay = 300) {
   return allEntries;
 }
 
-module.exports = { fetchBootstrap, paginateEvents, paginateCalendarEvents, delay };
+async function fetchEventDetail(eventApiId) {
+  const { data } = await client.get('/event/get', {
+    params: { event_api_id: eventApiId },
+  });
+  return data;
+}
+
+module.exports = { fetchBootstrap, paginateEvents, paginateCalendarEvents, fetchEventDetail, delay };
