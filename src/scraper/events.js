@@ -2,11 +2,18 @@ const { pool } = require('../db/connection');
 const { paginateEvents, paginateCalendarEvents, fetchEventDetail, delay } = require('../utils/luma-client');
 const { upsertCalendar } = require('./bootstrap');
 
-function extractText(node) {
-  if (!node) return '';
+const BLOCK_TYPES = new Set([
+  'doc', 'paragraph', 'heading', 'blockquote',
+  'bullet_list', 'ordered_list', 'list_item', 'code_block',
+]);
+
+function extractText(node, depth = 0) {
+  if (!node || depth > 50) return '';
+  if (node.type === 'hard_break') return '\n';
   if (node.text) return node.text;
-  if (!node.content) return '';
-  return node.content.map(extractText).join(node.type === 'doc' || node.type === 'paragraph' ? '\n' : '');
+  if (!Array.isArray(node.content)) return '';
+  const sep = BLOCK_TYPES.has(node.type) ? '\n' : '';
+  return node.content.map(c => extractText(c, depth + 1)).join(sep);
 }
 
 async function fetchAndStoreDescription(eventApiId) {
@@ -17,7 +24,7 @@ async function fetchAndStoreDescription(eventApiId) {
 
     await pool.query(
       `UPDATE events SET description_mirror = $1, description_text = $2 WHERE api_id = $3`,
-      [mirror ? JSON.stringify(mirror) : null, text, eventApiId]
+      [mirror, text, eventApiId]
     );
   } catch (err) {
     console.error(`    Failed to fetch description for ${eventApiId}: ${err.message}`);
