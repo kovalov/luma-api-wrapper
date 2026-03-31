@@ -11,9 +11,19 @@ const app = express();
 
 app.use(express.json());
 
-// Health check
+// Health check (no auth)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// API key auth middleware
+app.use('/api', (req, res, next) => {
+  if (!config.API_KEY) return next();
+  const key = req.headers['x-api-key'] || req.query.api_key;
+  if (key !== config.API_KEY) {
+    return res.status(401).json({ error: 'Invalid or missing API key' });
+  }
+  next();
 });
 
 // API routes
