@@ -1,0 +1,6 @@
+node_modules/
+.env
+*.log
+all_events.json
+events_with_guests.json
+.playwright-mcp/
