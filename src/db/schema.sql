@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS calendars (
 
 CREATE TABLE IF NOT EXISTS hosts (
   api_id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
+  name TEXT,
   first_name TEXT,
   last_name TEXT,
   avatar_url TEXT,
@@ -120,3 +120,7 @@ CREATE INDEX IF NOT EXISTS idx_hosts_linkedin ON hosts(linkedin_handle) WHERE li
 CREATE INDEX IF NOT EXISTS idx_hosts_name ON hosts(name);
 CREATE INDEX IF NOT EXISTS idx_event_hosts_host ON event_hosts(host_api_id);
 CREATE INDEX IF NOT EXISTS idx_scrape_runs_started ON scrape_runs(started_at DESC);
+
+-- Migration: allow null names (some Luma data has null names)
+ALTER TABLE hosts ALTER COLUMN name DROP NOT NULL;
+ALTER TABLE events ALTER COLUMN name DROP NOT NULL;
