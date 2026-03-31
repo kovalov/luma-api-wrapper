@@ -25,7 +25,7 @@ src/
     init.js             — Reads and executes schema.sql on startup
   scraper/
     bootstrap.js        — Syncs cities/categories/calendars from /discover/bootstrap-page
-    events.js           — Scrapes events from all sources, upserts hosts, links event_hosts
+    events.js           — Scrapes events from all sources, upserts hosts, links event_hosts, fetches descriptions for new events
     scheduler.js        — node-cron orchestration, initial-run detection
   routes/
     reference.js        — GET /api/cities, /api/categories, /api/calendars
@@ -33,7 +33,7 @@ src/
     hosts.js            — GET /api/hosts, /api/hosts/with-linkedin, /api/hosts/:id
     scrape.js           — GET /api/scrape/status, /api/scrape/history
   utils/
-    luma-client.js      — axios wrapper with cursor pagination and rate limiting
+    luma-client.js      — axios wrapper with cursor pagination, rate limiting, and individual event detail fetching
 ```
 
 ## Database
@@ -42,6 +42,7 @@ src/
 
 ## Key Design Decisions
 
+- Event descriptions fetched from `/event/get` only for newly inserted events (ProseMirror JSON stored as JSONB, plain text extracted alongside)
 - Events deduped by `api_id` using `ON CONFLICT DO NOTHING`
 - Hosts use `ON CONFLICT DO UPDATE` to capture profile changes (new LinkedIn, etc.)
 - Event-host linking runs unconditionally (not just for new events) to catch co-hosts from secondary sources

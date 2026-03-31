@@ -7,6 +7,7 @@ Scrapes events from [Luma](https://lu.ma) and exposes a REST API for lead genera
 - Scrapes events from all Luma cities, categories, and featured calendars
 - Stores events, hosts, and organizers in PostgreSQL
 - Incremental scraping — only new events are added on each run
+- Full event descriptions fetched and stored (raw ProseMirror JSON + plain text)
 - Host directory with LinkedIn URLs, event counts, and active cities
 - Paginated, filterable API endpoints
 - Cron-based auto-scraping (default: every 6 hours)
@@ -55,7 +56,7 @@ GET /api/events                      # Paginated event list
 GET /api/events?city=Amsterdam&is_free=true&has_linkedin_hosts=true
 GET /api/events?start_after=2026-04-01&sort=scraped_at
 GET /api/events/new?since=2026-03-31T00:00:00Z   # New events since timestamp
-GET /api/events/:id                  # Event detail with hosts and calendar
+GET /api/events/:id                  # Event detail with hosts, calendar, and full description
 ```
 
 ### Reference Data
