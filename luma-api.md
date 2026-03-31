@@ -16,11 +16,12 @@ Reverse-engineered from `https://luma.com` network traffic. All endpoints are pu
 6. [Calendar Events (Featured Calendars)](#6-calendar-events-featured-calendars)
 7. [Place Metadata](#7-place-metadata)
 8. [Place Calendars](#8-place-calendars)
-9. [Pagination](#9-pagination)
-10. [Reference Data — All Cities](#10-reference-data--all-cities)
-11. [Reference Data — All Categories](#11-reference-data--all-categories)
-12. [Reference Data — Featured Calendars](#12-reference-data--featured-calendars)
-13. [Event Object Schema](#13-event-object-schema)
+9. [Individual Event Detail](#9-individual-event-detail)
+10. [Pagination](#10-pagination)
+11. [Reference Data — All Cities](#11-reference-data--all-cities)
+12. [Reference Data — All Categories](#12-reference-data--all-categories)
+13. [Reference Data — Featured Calendars](#13-reference-data--featured-calendars)
+14. [Event Object Schema](#14-event-object-schema)
 
 ---
 
@@ -515,7 +516,34 @@ GET https://api2.luma.com/discover/get-calendars
 
 ---
 
-## 9. Pagination
+## 9. Individual Event Detail
+
+Returns full details for a single event, including the rich-text description.
+
+```
+GET https://api2.luma.com/event/get
+```
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `event_api_id` | string | yes | Event ID, e.g. `evt-W5stH62bNvCQB9H` |
+
+### Response (key fields beyond discovery data)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `description_mirror` | object | ProseMirror JSON document with full event description |
+| `ticket_types` | array | Detailed ticket tier information |
+| `sessions` | array | Sub-sessions for multi-session events |
+| `registration_questions` | array | Custom registration form fields |
+
+### description_mirror format
+
+ProseMirror JSON with node types: `doc`, `paragraph`, `bullet_list`, `ordered_list`, `list_item`, `heading`. Text nodes support marks: `bold`, `italic`, `link` (with `href` attr).
+
+---
+
+## 10. Pagination
 
 All paginated endpoints share the same cursor-based system.
 
@@ -564,7 +592,7 @@ while True:
 
 ---
 
-## 10. Reference Data — All Cities
+## 11. Reference Data — All Cities
 
 ### Europe (24 cities)
 
@@ -671,7 +699,7 @@ while True:
 
 ---
 
-## 11. Reference Data — All Categories
+## 12. Reference Data — All Categories
 
 | Name | `api_id` | `slug` | Events |
 |------|----------|--------|--------|
@@ -686,7 +714,7 @@ while True:
 
 ---
 
-## 12. Reference Data — Featured Calendars
+## 13. Reference Data — Featured Calendars
 
 | Name | `api_id` | `slug` |
 |------|----------|--------|
@@ -702,7 +730,7 @@ while True:
 
 ---
 
-## 13. Event Object Schema
+## 14. Event Object Schema
 
 Full schema of a single event entry as returned by both `/discover/get-paginated-events` and `/calendar/get-items`.
 
@@ -716,6 +744,7 @@ entry
 │   ├── end_at                string   ISO 8601 UTC "2026-03-31T19:00:00.000Z"
 │   ├── timezone              string   "Europe/Amsterdam"
 │   ├── url                   string   slug — full URL: https://lu.ma/{url}
+│   ├── description_mirror    object|null  ProseMirror JSON (only from /event/get)
 │   ├── cover_url             string   image URL
 │   ├── calendar_api_id       string   owning calendar
 │   ├── event_type            string   "independent"
