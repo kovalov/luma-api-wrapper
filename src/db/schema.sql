@@ -89,6 +89,8 @@ CREATE TABLE IF NOT EXISTS events (
   guest_count INTEGER DEFAULT 0,
   score DOUBLE PRECISION,
   featured_city_api_id TEXT,
+  description_mirror JSONB,
+  description_text TEXT,
   scraped_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -124,3 +126,7 @@ CREATE INDEX IF NOT EXISTS idx_scrape_runs_started ON scrape_runs(started_at DES
 -- Migration: allow null names (some Luma data has null names)
 ALTER TABLE hosts ALTER COLUMN name DROP NOT NULL;
 ALTER TABLE events ALTER COLUMN name DROP NOT NULL;
+
+-- Migration: add event description columns
+ALTER TABLE events ADD COLUMN IF NOT EXISTS description_mirror JSONB;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS description_text TEXT;
