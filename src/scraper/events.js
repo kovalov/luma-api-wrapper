@@ -95,10 +95,11 @@ async function insertEntries(entries) {
     const inserted = await insertEvent(ev, entry);
     if (inserted) {
       newCount++;
-      // Link hosts
-      for (const host of hosts) {
-        await linkEventHost(ev.api_id, host.api_id);
-      }
+    }
+
+    // Link hosts (always — catches co-hosts from secondary sources)
+    for (const host of hosts) {
+      await linkEventHost(ev.api_id, host.api_id);
     }
   }
 
@@ -133,11 +134,11 @@ async function insertEvent(ev, entry) {
       geo.city, geo.city_state, geo.address, geo.full_address,
       geo.country, geo.country_code,
       coord.latitude, coord.longitude, geo.mode,
-      ev.hide_rsvp || false, ev.show_guest_list || false, ev.waitlist_enabled || false,
-      ticket.is_free ?? true, price.cents || null, price.currency || null,
-      ticket.is_sold_out || false, ticket.spots_remaining ?? null,
-      ticket.require_approval || false, entry.guest_count || 0,
-      entry.score || null, featuredCity.api_id || null,
+      ev.hide_rsvp ?? false, ev.show_guest_list ?? false, ev.waitlist_enabled ?? false,
+      ticket.is_free ?? true, price.cents ?? null, price.currency ?? null,
+      ticket.is_sold_out ?? false, ticket.spots_remaining ?? null,
+      ticket.require_approval ?? false, entry.guest_count ?? 0,
+      entry.score ?? null, featuredCity.api_id ?? null,
     ]
   );
 

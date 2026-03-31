@@ -128,7 +128,7 @@ function buildFilters(query) {
   if (query.has_linkedin_hosts === 'true') {
     joins = `JOIN event_hosts eh_li ON eh_li.event_api_id = e.api_id
              JOIN hosts h_li ON h_li.api_id = eh_li.host_api_id AND h_li.linkedin_handle IS NOT NULL`;
-    conditions.push('TRUE'); // placeholder so join is used
+    // JOIN already filters; no extra condition needed
   }
 
   return { conditions, params, joins };
